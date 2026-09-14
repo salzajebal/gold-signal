@@ -56,9 +56,12 @@ fi
 pm2 stop gold-signal
 APP_STOPPED=1
 
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+"
+
 pg_restore \
-  --clean \
-  --if-exists \
   --no-owner \
   --no-privileges \
   --exit-on-error \
