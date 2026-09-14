@@ -104,7 +104,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 sudo certbot renew --dry-run
 
-npm ci
+npm ci --include=dev
 npm run build
 pm2 startOrReload ecosystem.config.cjs --update-env
 pm2 save
