@@ -1,5 +1,6 @@
 import { execSync, exec } from "child_process";
 import { promisify } from "util";
+import { DATABASE_URL } from "./config";
 
 const execAsync = promisify(exec);
 
@@ -25,10 +26,7 @@ export async function pushDbToGithub(): Promise<{ success: boolean; message: str
     return { success: false, message: "GITHUB_PERSONAL_ACCESS_TOKEN 환경변수가 없습니다" };
   }
 
-  const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl) {
-    return { success: false, message: "DATABASE_URL 환경변수가 없습니다" };
-  }
+  const dbUrl = DATABASE_URL;
 
   try {
     // pg_dump로 SQL 덤프 생성

@@ -8,6 +8,8 @@
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "tsx script/build.ts",
     "start": "NODE_ENV=production node dist/index.cjs",
+    "start:pm2": "pm2 start ecosystem.config.cjs",
+    "migrate:data": "node scripts/migrate-data.js",
     "check": "tsc",
     "db:push": "drizzle-kit push"
   },

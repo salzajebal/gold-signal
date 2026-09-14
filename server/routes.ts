@@ -20,12 +20,13 @@ import {
   notifyWithdrawalRequest,
 } from "./telegramBot";
 import { pushDbToGithub } from "./githubDbSync";
+import { DATABASE_URL } from "./config";
 
 const PgSessionStore = pgSession(session);
 
 // Create a separate pool for session store
 const sessionPool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: DATABASE_URL,
 });
 
 // Get KST Date (Korea Standard Time, UTC+9)

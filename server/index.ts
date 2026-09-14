@@ -5,6 +5,7 @@ import { createServer } from "http";
 import { testConnection, initializeDatabase } from "./db";
 import { pushDbToGithub } from "./githubDbSync";
 import { WebSocketServer, WebSocket } from "ws";
+import { HOST, PORT } from "./config";
 
 // WebSocket clients storage
 export const wsClients = new Set<WebSocket>();
@@ -149,12 +150,8 @@ app.use((req, res, next) => {
       await setupVite(httpServer, app);
     }
 
-    // ALWAYS serve the app on the port specified in the environment variable PORT
-    // Other ports are firewalled. Default to 5000 if not specified.
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
-    const port = parseInt(process.env.PORT || "5000", 10);
-    console.log(`Starting HTTP server on port ${port}...`);
+    const port = PORT;
+    console.log(`Starting HTTP server on ${HOST}:${port}...`);
     
     // Setup WebSocket servers using noServer mode to avoid interfering with Vite HMR
     const wss = new WebSocketServer({ noServer: true });
@@ -288,7 +285,7 @@ app.use((req, res, next) => {
     httpServer.listen(
       {
         port,
-        host: "0.0.0.0",
+        host: HOST,
         reusePort: true,
       },
       () => {
