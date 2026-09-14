@@ -109,8 +109,28 @@ npm run build
 pm2 startOrReload ecosystem.config.cjs --update-env
 pm2 save
 
-curl -fsS "http://127.0.0.1:${APP_PORT}/" >/dev/null
-curl -fsS https://gold-sl.com/ >/dev/null
+wait_for_url() {
+  local url="$1"
+  local attempts="${2:-30}"
+  local delay="${3:-2}"
+  local attempt
+
+  for ((attempt = 1; attempt <= attempts; attempt++)); do
+    if curl -fsS --max-time 5 "$url" >/dev/null; then
+      return 0
+    fi
+    sleep "$delay"
+  done
+
+  echo "상태 확인 실패: $url" >&2
+  return 1
+}
+
+if ! wait_for_url "http://127.0.0.1:${APP_PORT}/"; then
+  pm2 logs gold-signal --lines 80 --nostream
+  exit 1
+fi
+wait_for_url "https://gold-sl.com/"
 
 echo
 echo "운영 마무리 설정이 완료되었습니다."
