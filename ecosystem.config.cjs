@@ -20,6 +20,7 @@ module.exports = {
           process.env.DATABASE_URL ||
           "postgresql://postgres:password@localhost:5432/myapp",
         SESSION_SECRET: process.env.SESSION_SECRET,
+        ADMIN_USERNAME: process.env.ADMIN_USERNAME || "admin",
         ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
       },
     },

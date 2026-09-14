@@ -20,7 +20,7 @@ import {
   notifyWithdrawalRequest,
 } from "./telegramBot";
 import { pushDbToGithub } from "./githubDbSync";
-import { DATABASE_URL } from "./config";
+import { ADMIN_PASSWORD, ADMIN_USERNAME, DATABASE_URL } from "./config";
 
 const PgSessionStore = pgSession(session);
 
@@ -308,10 +308,6 @@ export async function registerRoutes(
         return res.status(400).json({ error: "아이디와 비밀번호를 입력해주세요" });
       }
 
-      // Admin login restriction: fixed credentials (ignoring env vars due to swap issue)
-      const ADMIN_USERNAME = "admin";
-      const ADMIN_PASSWORD = "admin8282";
-      
       console.log("Querying database for user...");
       const user = await storage.getUserByUsername(username);
       console.log("User found:", user ? "yes" : "no", "DB query completed");
@@ -434,10 +430,6 @@ export async function registerRoutes(
         return res.status(400).json({ error: "아이디와 비밀번호를 입력해주세요" });
       }
 
-      // Admin login restriction: fixed credentials (ignoring env vars due to swap issue)
-      const ADMIN_USERNAME = "admin";
-      const ADMIN_PASSWORD = "admin8282";
-      
       const user = await storage.getUserByUsername(username);
       
       // Only allow admin role users
@@ -5004,15 +4996,8 @@ export async function registerRoutes(
   });
 
   // ==================== DB → GitHub 백업 ====================
-  app.post("/api/admin/push-db-to-github", async (req, res) => {
+  app.post("/api/admin/push-db-to-github", requireAdmin, async (req, res) => {
     try {
-      const { password } = req.body;
-      // 비밀번호 검증 (어드민 비밀번호 또는 별도 백업 비밀번호)
-      const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin8282";
-      const BACKUP_PASSWORD = "qwer1234!!";
-      if (password !== ADMIN_PASSWORD && password !== BACKUP_PASSWORD) {
-        return res.status(401).json({ error: "비밀번호가 올바르지 않습니다" });
-      }
       const result = await pushDbToGithub();
       if (result.success) {
         res.json({ success: true, message: result.message });

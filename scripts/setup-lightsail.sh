@@ -69,12 +69,15 @@ echo "[4/7] 앱 환경 변수 파일 생성"
 cd "$APP_DIR"
 if [[ ! -f .env ]]; then
   SESSION_SECRET_VALUE="$(openssl rand -hex 32)"
+  ADMIN_PASSWORD_VALUE="$(openssl rand -hex 16)"
   umask 077
   cat > .env <<EOF
 NODE_ENV=production
 PORT=${APP_PORT}
 DATABASE_URL=postgresql://${APP_DB_USER}:${APP_DB_PASSWORD}@127.0.0.1:5432/${APP_DB_NAME}
 SESSION_SECRET=${SESSION_SECRET_VALUE}
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=${ADMIN_PASSWORD_VALUE}
 EOF
   echo ".env 파일을 안전한 자동 생성 값으로 만들었습니다."
 else

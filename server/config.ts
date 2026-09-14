@@ -6,7 +6,15 @@ export const DATABASE_URL =
 
 export const PORT = Number.parseInt(process.env.PORT || "3000", 10);
 export const HOST = "0.0.0.0";
+export const ADMIN_USERNAME = process.env.ADMIN_USERNAME?.trim() || "admin";
+export const ADMIN_PASSWORD =
+  process.env.ADMIN_PASSWORD?.trim() ||
+  (process.env.NODE_ENV === "production" ? "" : "admin8282");
 
 if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
   throw new Error(`Invalid PORT value: ${process.env.PORT}`);
+}
+
+if (process.env.NODE_ENV === "production" && !ADMIN_PASSWORD) {
+  throw new Error("ADMIN_PASSWORD is required in production");
 }

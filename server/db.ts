@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 import * as schema from "@shared/schema";
 import { eq } from "drizzle-orm";
-import { DATABASE_URL } from "./config";
+import { ADMIN_PASSWORD, ADMIN_USERNAME, DATABASE_URL } from "./config";
 
 const { Pool } = pg;
 
@@ -242,23 +242,23 @@ export async function initializeDatabase(): Promise<void> {
     client.release();
 
     console.log('Seeding admin user if not exists...');
-    const [existingAdmin] = await db.select().from(schema.users).where(eq(schema.users.username, 'admin'));
+    const [existingAdmin] = await db.select().from(schema.users).where(eq(schema.users.username, ADMIN_USERNAME));
     
     if (!existingAdmin) {
       await db.insert(schema.users).values({
-        username: 'admin',
-        password: 'admin8282',
+        username: ADMIN_USERNAME,
+        password: 'environment-managed',
         name: '관리자',
         role: 'admin',
         balance: '100000000',
         approvalStatus: 'approved',
       });
-      console.log('Admin user created: admin/admin8282');
+      console.log('Admin user created from environment configuration');
     } else {
-      // Ensure existing admin is approved and has correct password
+      // Admin authentication uses the environment secret, not the DB password column.
       await db.update(schema.users)
-        .set({ approvalStatus: 'approved', password: 'admin8282' })
-        .where(eq(schema.users.username, 'admin'));
+        .set({ approvalStatus: 'approved' })
+        .where(eq(schema.users.username, ADMIN_USERNAME));
       console.log('Admin user verified and updated');
     }
 
