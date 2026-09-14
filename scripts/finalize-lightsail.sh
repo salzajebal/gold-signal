@@ -81,7 +81,7 @@ mv "\$TEMP_FILE" "\$FINAL_FILE"
 trap - EXIT
 find "$BACKUP_DIR" -type f -name 'db-*.dump' -mtime +7 -delete
 EOF
-sudo chmod 700 /usr/local/sbin/gold-signal-backup
+sudo chmod 755 /usr/local/sbin/gold-signal-backup
 echo "15 3 * * * $USER /usr/local/sbin/gold-signal-backup" | sudo tee /etc/cron.d/gold-signal-backup >/dev/null
 sudo chmod 644 /etc/cron.d/gold-signal-backup
 /usr/local/sbin/gold-signal-backup
